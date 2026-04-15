@@ -1,0 +1,51 @@
+config_version = "0"
+
+exclude_patterns = [
+  "**/.terraform/**",
+  "**/node_modules/**",
+]
+
+test_patterns = [
+  "**/tests/**",
+  "**/*_test.go",
+]
+
+[smells]
+mode = "comment"
+
+[[source]]
+name = "default"
+default = true
+
+[[plugin]]
+name = "terraform"
+mode = "comment"
+
+[[plugin]]
+name = "tflint"
+mode = "comment"
+
+[[plugin]]
+name = "checkov"
+mode = "block"
+
+[[plugin]]
+name = "trivy"
+mode = "block"
+drivers = ["config"]
+
+[[plugin]]
+name = "trufflehog"
+mode = "block"
+
+[[plugin]]
+name = "markdownlint"
+mode = "comment"
+
+[[plugin]]
+name = "actionlint"
+mode = "comment"
+
+[[plugin]]
+name = "yamllint"
+mode = "comment"
