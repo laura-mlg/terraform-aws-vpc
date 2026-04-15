@@ -1,0 +1,82 @@
+# This configuration was generated with the setup-qlty-toml skill.
+# For reference: https://docs.qlty.sh/qlty-toml
+config_version = "0"
+
+exclude_patterns = [
+  "**/examples/**",
+  "**/.terraform/**",
+  "**/.tox/**",
+  "**/builds/**",
+]
+
+test_patterns = [
+  "**/tests/**",
+  "**/*.tftest.hcl",
+]
+
+[smells]
+mode = "comment"
+
+# Required — points to the built-in Qlty plugin registry.
+[[source]]
+name = "default"
+default = true
+
+# Terraform formatter
+[[plugin]]
+name = "terraform"
+mode = "comment"
+
+# Terraform linter (also used in pre-commit via terraform_tflint hook)
+[[plugin]]
+name = "tflint"
+mode = "comment"
+
+# IaC security scanner — misconfigurations and vulnerability scanning
+[[plugin]]
+name = "trivy"
+mode = "block"
+drivers = ["config", "vuln"]
+
+# IaC security scanner — Terraform-specific policy checks
+[[plugin]]
+name = "checkov"
+mode = "block"
+affects_cache = ["versions.tf", "variables.tf"]
+
+# Secrets detection
+[[plugin]]
+name = "trufflehog"
+mode = "block"
+
+# GitHub Actions workflow linter
+[[plugin]]
+name = "actionlint"
+mode = "comment"
+
+# YAML linter (covers workflow files and .pre-commit-config.yaml)
+[[plugin]]
+name = "yamllint"
+mode = "comment"
+
+# Markdown linter (README.md, CHANGELOG.md)
+[[plugin]]
+name = "markdownlint"
+mode = "comment"
+
+# Module intentionally omits encryption settings — enforced at the usage level
+[[triage]]
+plugins = ["checkov"]
+rules = ["CKV_AWS_19"]
+set.ignored = true
+
+# Module uses dynamic blocks that checkov flags as complexity issues
+[[triage]]
+plugins = ["checkov"]
+rules = ["CKV2_AWS_12"]
+set.mode = "monitor"
+
+# Per-plugin exclusion: skip checkov and trivy on example configs (not module code)
+[[exclude]]
+plugins = ["checkov", "trivy"]
+file_patterns = ["**/examples/**", "**/wrappers/**"]
